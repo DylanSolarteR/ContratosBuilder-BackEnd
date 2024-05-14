@@ -34,20 +34,6 @@ const usuarioSchema = new Schema(
   }
 );
 
-// usuarioSchema.pre('save', (next) =>{
-//     let usuario = this;
-//     if (!usuario.isModified('password')) return next();
-//     bcrypt.genSalt(10, (err, salt) =>{
-//       if (err) return next(err);
-//       bcrypt.hash(usuario.password, salt, (err, hash) =>{
-//         if (err) return next(err);
-//         usuario.password = hash;
-//         next();
-//       });
-//     });
-// });
-
-// Crear el modelo de usuario utilizando el esquema definido
 const Usuario = mongoose.model("Usuario", usuarioSchema);
 
 module.exports = Usuario;
