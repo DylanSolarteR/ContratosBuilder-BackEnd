@@ -1,8 +1,5 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const Schema = mongoose.Schema;
-
-// Definir el esquema para el modelo de usuario
 const usuarioSchema = new Schema(
   {
     tipo: {
@@ -17,7 +14,7 @@ const usuarioSchema = new Schema(
     documento: {
       type: String,
       required: true,
-      unique: true, // Asumiendo que cada documento/NIT debe ser único
+      unique: true, 
     },
     email: {
       type: String,
@@ -34,6 +31,6 @@ const usuarioSchema = new Schema(
   }
 );
 
-const Usuario = mongoose.model("Usuario", usuarioSchema);
+const Usuario = model("Usuario", usuarioSchema);
 
-module.exports = Usuario;
+export default Usuario;
