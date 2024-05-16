@@ -6,8 +6,11 @@ const authController = {}
 authController.signup = async (req,res)=>{
     try{
         const { tipo, nombre, documento, email, password } = req.body;
+        if(!validarContrasena(password)){
+            return res.status(400).json({
+                error:"La contraseña debe tener al menos una letra mayúscula,una letra minúscula, un carácter especial y al menos 8 caracteres de longitud"});
+        }
         const hashedPassword = await bcrypt.hash(password, 10); 
-
         const user = await Usuario.create({
             tipo,
             nombre,
@@ -42,5 +45,11 @@ authController.login =  async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+const validarContrasena = (contrasena) =>{
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(contrasena);
+}
+  
 
 export {authController}
