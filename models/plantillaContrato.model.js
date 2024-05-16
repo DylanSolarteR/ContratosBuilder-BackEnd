@@ -26,6 +26,8 @@ const plantillaContratoSchema = new Schema(
   }
 );
 
+plantillaContratoSchema.index({ nombre: 1, usuario: 1 }, { unique: true });
+
 const PlantillaContrato = model("PlantillaContrato", plantillaContratoSchema);
 
 export default PlantillaContrato;
