@@ -1,6 +1,4 @@
-import { Schema as _Schema, model } from "mongoose";
-
-const Schema = mongoose.Schema;
+import { Schema , model } from "mongoose";
 
 const clienteSchema = new Schema(
   {
