@@ -6,14 +6,14 @@ const plantillaContratoSchema = new Schema(
       type: String,
       required: true
     },
-    cabecera:{
-      type:String,
-      required:true
-    },
     items: [{
         type: Schema.Types.ObjectId,
         ref: 'Item'
     }],
+    status:{
+      type: String,
+      enum: ["aprobada", "revision","devolucion","rechazada"],
+    },
     usuario: {
       type: Schema.Types.ObjectId,
       ref: 'Usuario',
