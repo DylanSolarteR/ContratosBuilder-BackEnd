@@ -15,7 +15,6 @@ itemController.all = async (req,res)=>{
 
 itemController.create = async (req,res)=>{
     try{
-        console.log(req.user);
         const usuario = req.user.id;
         const newItem = { ...req.body, usuario }; 
         const item = await Item.create(newItem);

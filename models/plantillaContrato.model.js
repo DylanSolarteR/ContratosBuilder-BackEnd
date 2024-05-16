@@ -1,6 +1,4 @@
-const mongoose = require("mongoose");
-
-const Schema = mongoose.Schema;
+import { Schema, model } from "mongoose";
 
 const plantillaContratoSchema = new Schema(
   {
@@ -13,7 +11,7 @@ const plantillaContratoSchema = new Schema(
       required:true
     },
     items: [{
-        type: Schema.types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Item'
     }],
     usuario: {
