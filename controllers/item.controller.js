@@ -3,12 +3,15 @@ const itemController = {};
 
 itemController.all = async (req,res)=>{
     try{
-        const clausulas = await Item.find({});
+        const usuarioId = req.user.id;
+        const clausulas = await Item.find({ usuario: usuarioId });
         res.status(200).json(clausulas);
     }catch(error){
         res.status(500).json({ error: error.message });
     }
 };
+
+
 
 itemController.create = async (req,res)=>{
     try{
