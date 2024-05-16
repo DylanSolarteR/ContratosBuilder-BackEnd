@@ -9,7 +9,6 @@ const clienteSchema = new Schema(
     tipoDocumento: {
         type: String,
         required: true,
-        unique: true, 
     },
     documento: {
       type: String,
