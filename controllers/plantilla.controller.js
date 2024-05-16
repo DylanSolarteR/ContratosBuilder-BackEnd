@@ -62,4 +62,22 @@ plantillaController.delete = async (req, res) => {
     }
 };
 
+plantillaController.getById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const usuarioId = req.user.id;
+
+        const plantilla = await PlantillaContrato.findOne({ _id: id, usuario: usuarioId })
+            .populate('items', 'titulo tipo contenido'); 
+
+        if (!plantilla) {
+            return res.status(404).json({ error: 'Plantilla no encontrada o no tienes permisos para acceder' });
+        }
+
+        res.status(200).json(plantilla);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 export {plantillaController};
