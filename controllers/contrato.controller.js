@@ -144,7 +144,7 @@ contratoController.descargarContrato = async (req, res) => {
     try {
         const usuarioId = req.user.id;
         const contratoId = req.params.id;
-        const contrato = await Contrato.findByOne({_id:contratoId,usuario:usuarioId}).populate('cliente');
+        const contrato = await Contrato.findOne({_id:contratoId,usuario:usuarioId}).populate('cliente');
 
         if (!contrato) {
             return res.status(404).json({ error: 'Contrato no encontrado' });
@@ -167,7 +167,7 @@ contratoController.allContratos = async (req, res) => {
             filtroConsulta.cliente = req.query.clienteId;
         }
         const contratos = await Contrato.find(filtroConsulta)
-                                .populate('cliente')
+                                .populate('cliente plantillaContrato')
                                 .select('-contenido -pdf');
 
         if (!contratos) {
