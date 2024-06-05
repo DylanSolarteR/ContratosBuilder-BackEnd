@@ -4,7 +4,7 @@ const usuarioSchema = new Schema(
   {
     tipo: {
       type: String,
-      enum: ["persona", "empresa"],
+      enum: ["persona", "empresa","cc","nit"],
       required: true,
     },
     nombre: {

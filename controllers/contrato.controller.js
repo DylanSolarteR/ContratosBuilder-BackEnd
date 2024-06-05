@@ -32,7 +32,7 @@ const reemplazarVariablesEnEncabezado = (encabezadoContenido, cliente,usuario) =
                               .replace('[Tipo de Documento]', cliente.tipoDocumento)
                               .replace('[Número de Documento]', cliente.documento)
                               .replace('[Fecha]', new Date().toLocaleDateString())
-                              .replace('[Nombre del Empleador]', usuario.nombre)
+                              .replace('[Nombre del Empleador]', usuario.tipo)
                               .replace('[Tipo de Documento Empleador]', 'NIT')
                               .replace('[Número de Documento Empleador]', usuario.documento);
 };
