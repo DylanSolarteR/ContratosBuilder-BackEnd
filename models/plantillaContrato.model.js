@@ -7,6 +7,11 @@ const plantillaContratoSchema = new Schema(
       required: true
     },
 
+    encabezado: {
+      type: Schema.Types.ObjectId,
+      ref: 'Item'
+    },
+
     items: [{
         type: Schema.Types.ObjectId,
         ref: 'Item'

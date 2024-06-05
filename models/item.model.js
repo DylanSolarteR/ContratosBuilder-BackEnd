@@ -9,7 +9,7 @@ const itemSchema = new Schema(
     },
     tipo: {
       type: String,
-      enum: ["clausula", "item"],
+      enum: ["clausula", "encabezado"],
       required: true,
     },
     contenido:{
