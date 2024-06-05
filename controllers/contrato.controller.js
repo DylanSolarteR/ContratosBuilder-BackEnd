@@ -10,7 +10,7 @@ import { PassThrough  } from 'stream';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+const logoPath = path.join(__dirname, '..', 'img', 'logo.png');
 const contratoController = {};
 
 const obtenerPlantillaYCliente = async (plantillaId, clienteId, usuarioId) => {
@@ -38,16 +38,16 @@ const reemplazarVariablesEnEncabezado = (encabezadoContenido, cliente,usuario) =
 };
 
 const crearContenidoDelContrato = (encabezado, items) => {
-    let contratoContenido = `\n\n${encabezado}\n\n`;
+    let contratoContenido = `${encabezado}\n\n`;
     items.forEach(item => {
         contratoContenido += `\n\n${item.titulo}\n${item.contenido}`;
     });
     return contratoContenido;
 };
 
-const crearPDFBuffer = async (contratoContenido) => {
+const crearPDFBuffer = async (contratoContenido, cliente, usuario,plantilla) => {
     return new Promise((resolve, reject) => {
-        const doc = new PDFDocument();
+        const doc = new PDFDocument({ margin: 50 });
         const chunks = [];
         const stream = new PassThrough();
 
@@ -57,7 +57,31 @@ const crearPDFBuffer = async (contratoContenido) => {
         doc.on('error', err => reject(err));
 
         doc.pipe(stream);
-        doc.text(contratoContenido, { align: 'justify' });
+        
+        // Encabezado del PDF
+        doc.image(logoPath, 50, 45, { width: 50 })
+           .fontSize(20)
+           .text(usuario.nombre, 110, 57)
+           .moveDown();
+
+        // Información del cliente
+        doc.fontSize(12)
+           .text(`Cliente: ${cliente.nombreCompleto}`, { align: 'right' })
+           .text(`Documento: ${cliente.tipoDocumento} ${cliente.documento}`, { align: 'right' })
+           .moveDown();
+
+        // Título del contrato
+        doc.fontSize(18)
+           .text(plantilla.nombre, { align: 'center' })
+           .moveDown();
+
+        // Contenido del contrato
+        doc.fontSize(12)
+           .text(contratoContenido,doc.x - 50, doc.y, {
+               align: 'justify',
+               ellipsis: true
+           });
+
         doc.end();
     });
 };
@@ -83,38 +107,27 @@ const guardarPDF = (contratoContenido, clienteNombre) => {
     });
 };
 
-const crearYGuardarContrato = async (plantilla, cliente, usuario,pdfBuffer) => {
-    
-    // const pdfPath = await guardarPDF(contratoContenido, cliente.nombreCompleto);
-
-    const nuevoContrato = new Contrato({
-        cliente: cliente._id,
-        plantillaContrato: plantilla._id,
-        contenido: contratoContenido,
-        usuario: usuario.id,
-        pdf: pdfBuffer,
-    });
-    await nuevoContrato.save();
-
-    return nuevoContrato;
-};
 
 contratoController.generarContrato = async (req, res) => {
     try {
         const usuario = await Usuario.findById(req.user.id);
-        
         const { plantillaId, clienteId } = req.body;
-
+        
         const { plantilla, cliente } = await obtenerPlantillaYCliente(plantillaId, clienteId, usuario.id);
+        const contratoExistente = await Contrato.find({cliente:clienteId,estado:'activo'});
+        if(contratoExistente.length > 0){
+            return res.status(400).json({ error: 'Este cliente ya cuenta con un contrato activo' });
+        }
         const encabezadoContenido = reemplazarVariablesEnEncabezado(plantilla.encabezado.contenido, cliente,usuario);
-        const contratoContenido = crearContenidoDelContrato(encabezadoContenido, plantilla.items);
-        const pdfBuffer = await crearPDFBuffer(contratoContenido);
+        const contratoContenido = crearContenidoDelContrato(encabezadoContenido, plantilla.items, plantilla.nombre);
+        const pdfBuffer = await crearPDFBuffer(contratoContenido, cliente, usuario, plantilla);
         const nuevoContrato = new Contrato({
             cliente: cliente._id,
             plantillaContrato: plantilla._id,
             contenido: contratoContenido,
             usuario: usuario.id,
             pdf: pdfBuffer,
+            estado:'activo',
         });
         await nuevoContrato.save();
 

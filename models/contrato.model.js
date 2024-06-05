@@ -17,6 +17,11 @@ const contratoSchema = new Schema(
       ref: 'Usuario',
       required: true
     },
+    estado:{
+      type: String,
+      enum: ["activo", "terminado"],
+      required: true,
+    },
     contenido:String,
     pdf:Buffer
   },
