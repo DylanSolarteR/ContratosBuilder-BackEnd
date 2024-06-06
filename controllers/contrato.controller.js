@@ -39,8 +39,9 @@ const reemplazarVariablesEnEncabezado = (encabezadoContenido, cliente,usuario) =
 
 const crearContenidoDelContrato = (encabezado, items) => {
     let contratoContenido = `${encabezado}\n\n`;
+    let clausulaCount = 0;
     items.forEach(item => {
-        contratoContenido += `\n\n${item.titulo}\n${item.contenido}`;
+        contratoContenido += `\n\nClausula ${++clausulaCount}\n${item.contenido}`;
     });
     return contratoContenido;
 };
@@ -82,6 +83,14 @@ const crearPDFBuffer = async (contratoContenido, cliente, usuario,plantilla) => 
                ellipsis: true
            });
 
+        doc.moveDown(4);
+        const signatureY = doc.y;
+        doc.text('_________________________', 50, signatureY)
+            .text('_________________________', 350, signatureY)
+            .moveDown()
+            .text('Firma del Empleador', 50,signatureY+15)
+            .text('Firma del Empleado', 350,signatureY+15);
+
         doc.end();
     });
 };
@@ -116,7 +125,7 @@ contratoController.generarContrato = async (req, res) => {
         const { plantilla, cliente } = await obtenerPlantillaYCliente(plantillaId, clienteId, usuario.id);
         const contratoExistente = await Contrato.find({cliente:clienteId,estado:'activo'});
         if(contratoExistente.length > 0){
-            return res.status(400).json({ error: 'Este cliente ya cuenta con un contrato activo' });
+            // return res.status(400).json({ error: 'Este cliente ya cuenta con un contrato activo' });
         }
         const encabezadoContenido = reemplazarVariablesEnEncabezado(plantilla.encabezado.contenido, cliente,usuario);
         const contratoContenido = crearContenidoDelContrato(encabezadoContenido, plantilla.items, plantilla.nombre);
