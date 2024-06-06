@@ -76,6 +76,26 @@ authController.my = async(req,res) =>{
     }
 }
 
+authController.update = async(req,res) =>{
+    try {
+        const usuarioId = req.user.id;
+
+        const usuarioActualizado = await Usuario.findOneAndUpdate(
+            { _id: usuarioId }, 
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!usuarioActualizado) {
+            return res.status(404).json({ error: 'Usuario no encontrado o no tienes permisos para actualizarlo' });
+        }
+
+        res.status(200).json(usuarioActualizado);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 const validarContrasena = (contrasena) =>{
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return regex.test(contrasena);
